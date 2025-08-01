@@ -1,0 +1,46 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2196F3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4ECDC4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景圆形 -->
+  <circle cx="60" cy="60" r="55" fill="url(#gradient1)" stroke="#fff" stroke-width="3"/>
+  
+  <!-- GitHub猫头图标风格的主体 -->
+  <g transform="translate(60,60)">
+    <!-- 主体 -->
+    <path d="M-20,-25 C-25,-30 -25,-35 -20,-40 C-10,-45 10,-45 20,-40 C25,-35 25,-30 20,-25 C20,-15 20,-5 15,5 C10,10 5,12 0,12 C-5,12 -10,10 -15,5 C-20,-5 -20,-15 -20,-25 Z" fill="#fff" opacity="0.9"/>
+    
+    <!-- 眼睛 -->
+    <circle cx="-8" cy="-15" r="3" fill="#333"/>
+    <circle cx="8" cy="-15" r="3" fill="#333"/>
+    
+    <!-- 嘴巴 -->
+    <path d="M-5,-5 Q0,-8 5,-5" stroke="#333" stroke-width="2" fill="none"/>
+    
+    <!-- 速度线条效果 -->
+    <g opacity="0.7">
+      <path d="M25,-20 L35,-18" stroke="url(#gradient2)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M25,-10 L40,-8" stroke="url(#gradient2)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M25,0 L35,2" stroke="url(#gradient2)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M25,10 L30,12" stroke="url(#gradient2)" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+  
+  <!-- 底部文字 -->
+  <text x="60" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff">GitHub Fast</text>
+  
+  <!-- 装饰性星星 -->
+  <g fill="#fff" opacity="0.8">
+    <polygon points="20,25 22,30 27,30 23,33 25,38 20,35 15,38 17,33 13,30 18,30" transform="scale(0.6)"/>
+    <polygon points="95,35 97,40 102,40 98,43 100,48 95,45 90,48 92,43 88,40 93,40" transform="scale(0.5)"/>
+    <polygon points="25,85 27,90 32,90 28,93 30,98 25,95 20,98 22,93 18,90 23,90" transform="scale(0.4)"/>
+  </g>
+</svg>

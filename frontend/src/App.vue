@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import hosts from "components/hosts.vue";
+import hosts from "./components/Hosts.vue";
 import {
   WindowMinimise,
   WindowToggleMaximise,

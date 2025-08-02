@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -71,6 +72,21 @@ func copyFile(dst string, src *os.File) {
 		fmt.Println("复制文件失败:", err)
 		return
 	}
+}
+
+func (h *Host) GetHostsPath() string {
+	system := h.System()
+	hostsPath := ""
+	switch system {
+	case "windows":
+		hostsPath = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+	case "linux":
+		hostsPath = "/etc/hosts"
+	case "darwin":
+		hostsPath = "/etc/hosts"
+	}
+
+	return hostsPath
 }
 
 // 根据路径修改hosts文件
@@ -267,5 +283,27 @@ func (h *Host) StopPoll() {
 	if h.stopChan != nil {
 		close(h.stopChan)
 		h.stopChan = nil
+	}
+}
+
+func (h *Host) OpenHostsFolder() {
+	hostsPath := h.GetHostsPath()
+	if hostsPath == "" {
+		fmt.Println("无法打开hosts文件夹，因为找不到hosts文件路径。")
+		return
+	}
+
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("explorer", "/select,"+hostsPath)
+	} else {
+		cmd = exec.Command("open", "-R", hostsPath)
+	}
+
+	err := cmd.Start()
+	if err != nil {
+		fmt.Printf("打开hosts文件夹失败: %v\n", err)
+	} else {
+		fmt.Printf("已打开hosts文件夹: %s\n", hostsPath)
 	}
 }

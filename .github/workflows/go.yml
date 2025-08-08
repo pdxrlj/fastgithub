@@ -4,7 +4,7 @@ on:
   push:
     branches: ["master"]
     tags:
-      - "master"
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
     branches: ["master"]
 
@@ -29,6 +29,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
+
+      - name: Install Fronted Dependencies
+        run: |
+          cd frontend
+          pnpm install -g vue-tsc
+          pnpm install
 
       - name: Build with Wails
         run: wails build

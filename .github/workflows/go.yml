@@ -30,22 +30,18 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: Install Fronted Dependencies
+      - name: Install Frontend Dependencies
         run: |
           cd frontend
-          pnpm install
-          pnpm add -D vite vue-tsc
-          pnpm exec vue-tsc --version
-          pnpm exec vite --version
+          npm install
+          npm install -D vue-tsc@latest vite@latest
+          echo "PATH=${{ github.workspace }}/frontend/node_modules/.bin:$PATH" >> $GITHUB_ENV
 
       - name: Build with Wails
-        run: wails build
+        # run: wails build -platform windows/amd64
+        run: |
+          echo $PATH
+          wails build -platform linux/amd64
         env:
           NODE_ENV: production
 

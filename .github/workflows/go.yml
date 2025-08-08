@@ -2,7 +2,7 @@ name: Wails Build and Release
 
 on:
   push:
-    # 只在创建新标签时触发发布
+    branches: ["master"]
     tags:
       - "master"
   pull_request:

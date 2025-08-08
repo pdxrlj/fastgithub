@@ -54,7 +54,7 @@ jobs:
         # run: wails build -platform windows/amd64
         run: |
           echo $PATH
-          wails build -platform linux/amd64
+          wails build -platform linux/amd64 -tags webkit2gtk-4.1
 
       # 输出构建产物路径
       - name: Set Output Path

@@ -3,51 +3,51 @@ name: Wails Build and Release
 on:
   push:
     # 只在创建新标签时触发发布
-    tags: 
-      - 'v*'  # 匹配 v1.0.0, v2.3.4 等格式的标签
+    tags:
+      - "master"
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        # 需要获取完整历史记录才能创建标签
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          # 需要获取完整历史记录才能创建标签
+          fetch-depth: 0
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.24'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24"
 
-    - name: Install Wails
-      run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-    - name: Build with Wails
-      run: wails build
-      env:
-        NODE_ENV: production
+      - name: Build with Wails
+        run: wails build
+        env:
+          NODE_ENV: production
 
-    # 输出构建产物路径
-    - name: Set Output Path
-      id: set-output
-      run: |
-        # Wails 默认输出到 build/bin 目录
-        echo "release_path=build/bin" >> $GITHUB_OUTPUT
+      # 输出构建产物路径
+      - name: Set Output Path
+        id: set-output
+        run: |
+          # Wails 默认输出到 build/bin 目录
+          echo "release_path=build/bin" >> $GITHUB_OUTPUT
 
-    # 保存构建产物供发布使用
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: release-binaries
-        path: ${{ steps.set-output.outputs.release_path }}
+      # 保存构建产物供发布使用
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-binaries
+          path: ${{ steps.set-output.outputs.release_path }}
 
   release:
     # 依赖 build 任务完成
@@ -55,24 +55,24 @@ jobs:
     runs-on: ubuntu-latest
     # 只在创建新标签时运行
     if: startsWith(github.ref, 'refs/tags/')
-    
-    steps:
-    - name: Download Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: release-binaries
 
-    # 创建 GitHub Release
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        # 使用标签名称作为版本号
-        tag_name: ${{ github.ref_name }}
-        # 使用标签名称作为 Release 名称
-        name: Release ${{ github.ref_name }}
-        # 自动生成变更日志
-        generate_release_notes: true
-        # 上传所有构建产物
-        files: |
-          !(macos|windows|linux)*  # 上传所有非平台目录
-          */**                      # 上传所有子目录
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-binaries
+
+      # 创建 GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # 使用标签名称作为版本号
+          tag_name: ${{ github.ref_name }}
+          # 使用标签名称作为 Release 名称
+          name: Release ${{ github.ref_name }}
+          # 自动生成变更日志
+          generate_release_notes: true
+          # 上传所有构建产物
+          files: |
+            !(macos|windows|linux)*  # 上传所有非平台目录
+            */**                      # 上传所有子目录

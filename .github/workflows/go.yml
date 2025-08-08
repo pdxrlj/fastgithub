@@ -31,11 +31,13 @@ jobs:
           go-version: "1.24"
 
       - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Upgrade Wails module (use 4.1)
         run: |
           go get -u github.com/wailsapp/wails/v2@latest
           go mod tidy
           go clean -cache -modcache
-          # 可选：确认版本
           go list -m -json github.com/wailsapp/wails/v2 | sed -n 's/.*Version.*/&/p'
 
       - name: Install Node.js

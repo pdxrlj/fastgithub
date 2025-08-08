@@ -41,7 +41,7 @@ jobs:
           echo $PATH
           wails build -platform linux/amd64
         env:
-          NODE_ENV: production
+          # NODE_ENV: production
 
       # 输出构建产物路径
       - name: Set Output Path

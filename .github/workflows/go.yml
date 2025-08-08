@@ -33,13 +33,6 @@ jobs:
       - name: Install Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Upgrade Wails module (use 4.1)
-        run: |
-          go get -u github.com/wailsapp/wails/v2@latest
-          go mod tidy
-          go clean -cache -modcache
-          go list -m -json github.com/wailsapp/wails/v2 | sed -n 's/.*Version.*/&/p'
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -54,7 +47,7 @@ jobs:
         # run: wails build -platform windows/amd64
         run: |
           echo $PATH
-          wails build -platform linux/amd64 -tags webkit2gtk-4.1
+          wails build -platform linux/amd64
 
       # 输出构建产物路径
       - name: Set Output Path

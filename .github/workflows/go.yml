@@ -33,8 +33,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm install 
-          npm -g install vue-tsc@1.8.27 vite@3.0.7
+          npm install
 
       - name: Build with Wails
         # run: wails build -platform windows/amd64

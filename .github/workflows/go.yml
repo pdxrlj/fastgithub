@@ -33,7 +33,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm install
+          npm install 
     
       - name: Build with Wails
         # run: wails build -platform windows/amd64

@@ -34,6 +34,9 @@ jobs:
         run: |
           cd frontend
           npm install
+          ls -al {{ github.workspace }}
+
+
           echo "PATH=${{ github.workspace }}/frontend/node_modules/.bin:$PATH" >> $GITHUB_ENV
 
       - name: Build with Wails

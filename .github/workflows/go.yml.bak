@@ -2,6 +2,7 @@ name: Wails Build and Release
 
 on:
   push:
+    # branches: ["master"]
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
@@ -9,24 +10,14 @@ on:
 
 jobs:
   build:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            platform: linux/amd64
-          - os: windows-latest
-            platform: windows/amd64
-
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
+          # 需要获取完整历史记录才能创建标签
           fetch-depth: 0
-
-      # --- Linux 依赖 ---
+      
       - name: Install Linux deps
-        if: matrix.os == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -34,69 +25,69 @@ jobs:
             libgtk-3-dev libwebkit2gtk-4.0-dev \
             libglib2.0-dev libayatana-appindicator3-dev librsvg2-dev
 
-      # --- Windows 依赖（为 cgo 提供编译器）---
-      - name: Install Windows deps (mingw-w64)
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          choco install -y mingw
-          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v4
         with:
-          go-version: "1.22.x"
-          check-latest: true
+          go-version: "1.24"
 
       - name: Install Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
 
       - name: Install Frontend Dependencies
         run: |
           cd frontend
-          npm ci
+          npm install
 
       - name: Build with Wails
-        env:
-          # 确保启用 cgo（默认启用；显式声明更稳妥）
-          CGO_ENABLED: "1"
+        # run: wails build -platform windows/amd64
         run: |
-          wails doctor
-          wails build -platform ${{ matrix.platform }}
+          echo $PATH
+          wails build -platform linux/amd64
 
+      # 输出构建产物路径
       - name: Set Output Path
         id: set-output
-        run: echo "release_path=build/bin" >> $GITHUB_OUTPUT
+        run: |
+          # Wails 默认输出到 build/bin 目录
+          echo "release_path=build/bin" >> $GITHUB_OUTPUT
 
+      # 保存构建产物供发布使用
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-binaries-${{ matrix.os }}
+          name: release-binaries
           path: ${{ steps.set-output.outputs.release_path }}
 
   release:
+    # 依赖 build 任务完成
     needs: build
     runs-on: ubuntu-latest
+    # 只在创建新标签时运行
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
     steps:
-      - name: Download Artifacts
+      - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          pattern: release-binaries-*
-          merge-multiple: true
+          name: release-binaries
           path: build/bin
 
+      # 创建 GitHub Release
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          # 使用标签名称作为版本号
           tag_name: ${{ github.ref_name }}
+          # 使用标签名称作为 Release 名称
           name: Release ${{ github.ref_name }}
+          # 自动生成变更日志
           generate_release_notes: true
+          # 上传所有构建产物
           files: build/bin/**
+
